@@ -18,8 +18,10 @@ public class Character : MonoBehaviour
     private float timeToWait;
     public float maxHappyness;
     public UnityEngine.UI.Slider slider;
+    private Transform destination;
+    float timeSinceStarted = 0f;
 
-    void Start() {
+    private void Start() {
         happyness = Random.Range(0, maxHappyness);
         characterType = (CharacterType)Random.Range(0, 4);
         timeToWait = happyness / 10;
@@ -27,6 +29,17 @@ public class Character : MonoBehaviour
 
     private void OnMouseDown() {
         StartCoroutine(Timer());
+    }
+
+    private void Update() {
+        if (destination != null) {
+            float step =  0.5f * Time.deltaTime;
+            transform.position = Vector3.MoveTowards(transform.position, destination.position, step); 
+        }
+        if(transform.position == destination.position) {
+            Scene1.Instance.GetCharacterOnScreen().Remove(gameObject);
+            Destroy(gameObject);
+        }
     }
 
     private IEnumerator Timer() {
@@ -40,6 +53,14 @@ public class Character : MonoBehaviour
 
             yield return new WaitForFixedUpdate();
         }
+    }
+
+    public Transform GetDestination() {
+        return destination;
+    }
+
+    public void SetDestination(Transform d) {
+        destination = d;
     }
 }
 
